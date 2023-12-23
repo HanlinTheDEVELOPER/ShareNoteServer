@@ -1,15 +1,18 @@
 import express, { Request, Response } from "express";
+import "./database";
 import "dotenv/config";
+import NoteRouter from "./routes/note";
+import exp from "constants";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScrssssadfdfipt Express!");
-  console.log("Hello, TypeScript Express!");
-});
+app.use(express.urlencoded({ extended: false }));
+
+const router = express.Router();
+app.use("/api/v1", router);
+router.use("/notes", NoteRouter);
 
 app.listen(port, () => {
-  console.log(process.env.App);
   console.log(`Server running at http://localhost:${port}`);
 });
