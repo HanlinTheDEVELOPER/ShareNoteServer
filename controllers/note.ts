@@ -19,3 +19,11 @@ export const create = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error });
   }
 };
+
+export const show = async (req: Request, res: Response) => {
+  const note = await Note.findById(req.params.id);
+  if (!note) {
+    return res.status(404).json({ message: "note not found" });
+  }
+  res.status(200).json(note);
+};

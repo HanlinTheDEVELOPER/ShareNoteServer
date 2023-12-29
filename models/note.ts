@@ -24,11 +24,15 @@ const NoteSchema = new mongoose.Schema(
     },
     visibility: {
       type: String,
-      required: true,
       enum: ["public", "private"],
-      // default: "public",
+      default: "public",
     },
     receiver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
