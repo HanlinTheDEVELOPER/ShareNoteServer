@@ -1,8 +1,6 @@
-import express, { Request, Response } from "express";
-import "./database";
-import "dotenv/config";
-import NoteRouter from "./routes/note";
-import exp from "constants";
+import express from "express";
+import "./database.js";
+import NoteRouter from "./routes/note.js";
 
 const app = express();
 const port = process.env.PORT || 3000;

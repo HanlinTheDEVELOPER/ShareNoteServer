@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-const isReceiverRequire = (note: any) => {
+const isReceiverRequire = (note) => {
   console.log(note);
-  if (note.visibility === "private") {
-    return true;
+  if (note.visibility === "public") {
+    return false;
   }
-  return false;
+  return true;
 };
 
 const NoteSchema = new mongoose.Schema(
@@ -30,7 +30,7 @@ const NoteSchema = new mongoose.Schema(
     receiver: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      nullable: true,
     },
     sender: {
       type: mongoose.Schema.Types.ObjectId,

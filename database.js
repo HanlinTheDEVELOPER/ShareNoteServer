@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-import "dotenv/config";
 
-const mongodb: string = process.env.MONGO_URL || "";
+const mongodb = process.env.MONGO_URL || "";
 
 mongoose.connect(mongodb);
 
