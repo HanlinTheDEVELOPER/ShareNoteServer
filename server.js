@@ -31,7 +31,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/", (req, res) => {
-  console.log(req.baseUrl);
   res.send("Hello World!");
 });
 const router = express.Router();
