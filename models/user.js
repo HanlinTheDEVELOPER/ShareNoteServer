@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    password: {
+    avatar: {
       type: String,
       required: true,
     },
@@ -20,8 +20,6 @@ const UserSchema = new mongoose.Schema(
       enum: ["free", "premium"],
       default: "free",
     },
-    reset_token: String,
-    token_expired_time: Date,
   },
   {
     timestamps: true,

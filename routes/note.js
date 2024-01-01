@@ -1,7 +1,7 @@
 import express from "express";
 import * as NoteController from "../controllers/note.js ";
 import validate from "../middlewares/validateRequest.js";
-import createNoteSchema from "../DTO/createNote.schema.js";
+import createNoteSchema from "../Schema/createNote.schema.js";
 
 const NoteRouter = express.Router();
 
