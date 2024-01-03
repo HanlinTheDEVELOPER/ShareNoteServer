@@ -43,3 +43,20 @@ export const show = async (req, res) => {
     .status(StatusCodes.ACCEPTED)
     .json(successResponse(StatusCodes.ACCEPTED, "Fetch Message Success", note));
 };
+
+export const deleteNote = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const note = await Note.findOne({ _id: id });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        successResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Internal Server Error"
+        )
+      );
+  }
+};
