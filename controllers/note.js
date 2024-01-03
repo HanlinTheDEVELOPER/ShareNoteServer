@@ -47,7 +47,16 @@ export const show = async (req, res) => {
 export const deleteNote = async (req, res) => {
   const { id } = req.params;
   try {
-    const note = await Note.findOne({ _id: id });
+    const note = await Note.findByIdAndDelete(id);
+    if (!note) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json(errorResponse(StatusCodes.NOT_FOUND, "Note not found"));
+    }
+    await note.remove();
+    res
+      .status(StatusCodes.NO_CONTENT)
+      .json(StatusCodes.NO_CONTENT, "Note Deleted", []);
   } catch (error) {
     console.log(error);
     res
