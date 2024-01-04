@@ -2,7 +2,7 @@ import Note from "../models/note.js";
 import { StatusCodes } from "http-status-codes";
 import { errorResponse, successResponse } from "../lib/response.js";
 
-export const index = async (req, res) => {
+export const getAllNotes = async (req, res) => {
   const notes = await Note.find();
   if (!notes) {
     return res.status(500).json({ message: "internal server error" });
@@ -14,7 +14,7 @@ export const index = async (req, res) => {
     );
 };
 
-export const create = async (req, res) => {
+export const createNote = async (req, res) => {
   try {
     const note = await Note.create(req.body);
     return res
@@ -32,7 +32,7 @@ export const create = async (req, res) => {
   }
 };
 
-export const show = async (req, res) => {
+export const showNoteById = async (req, res) => {
   const note = await Note.findById(req.params.id);
   if (!note) {
     return res
@@ -44,7 +44,7 @@ export const show = async (req, res) => {
     .json(successResponse(StatusCodes.ACCEPTED, "Fetch Message Success", note));
 };
 
-export const update = async (req, res) => {
+export const updateNote = async (req, res) => {
   const { id } = req.params;
   try {
     const updateNote = await Note.findByIdAndUpdate(id, req.body, {
