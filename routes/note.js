@@ -7,5 +7,6 @@ const NoteRouter = express.Router();
 
 NoteRouter.get("/", NoteController.index);
 NoteRouter.post("/", validate(createNoteSchema), NoteController.create);
+NoteRouter.delete("/:id", NoteController.deleteNote);
 
 export default NoteRouter;
