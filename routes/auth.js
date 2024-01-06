@@ -1,10 +1,12 @@
 import express from "express";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth2";
+import multer from "multer";
 
 import * as AuthController from "../controllers/auth.js";
 
 const authRouter = express.Router();
+const upload = multer();
 
 passport.use(
   new GoogleStrategy(
@@ -46,5 +48,11 @@ authRouter.get(
 authRouter.get("/success", AuthController.login);
 
 authRouter.get("/failure", AuthController.failure);
+
+authRouter.put(
+  "/updateProfile",
+  upload.single("avatar"),
+  AuthController.updateProfile
+);
 
 export default authRouter;

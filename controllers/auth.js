@@ -61,3 +61,9 @@ export const failure = (req, res) => {
       errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Internal Server Error")
     );
 };
+
+export const updateProfile = (req, res) => {
+  console.log(req.body);
+  console.log(req.file);
+  return res.status(200).json({ file: req.file });
+};
