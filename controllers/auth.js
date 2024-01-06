@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import User from "../models/user.js";
 import { errorResponse, successResponse } from "../lib/response.js";
-
+import uploadImage from "../lib/uploadImage.js";
 export const login = async (req, res) => {
   try {
     const { displayName, email, picture } = req.user;
@@ -62,8 +62,31 @@ export const failure = (req, res) => {
     );
 };
 
-export const updateProfile = (req, res) => {
-  console.log(req.body);
-  console.log(req.file);
-  return res.status(200).json({ file: req.file });
+export const updateProfile = async (req, res) => {
+  const oldUser = await User.findById(req.user);
+  let avatar_url = oldUser.avatar;
+  if (req.file) {
+    avatar_url = await uploadImage(req, res);
+  }
+  try {
+    oldUser.name = req.body.name;
+    oldUser.avatar = avatar_url;
+    oldUser.plan = req.body.plan;
+    await oldUser.save();
+    res
+      .status(StatusCodes.ACCEPTED)
+      .json(
+        successResponse(StatusCodes.ACCEPTED, "Update Profile Success", oldUser)
+      );
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        errorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Internal Server Error"
+        )
+      );
+  }
 };

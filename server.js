@@ -1,14 +1,18 @@
 import express from "express";
 import session from "express-session";
 import { default as connectMongoDBSession } from "connect-mongodb-session";
+import passport from "passport";
+import { initializeApp } from "firebase/app";
 
 import "./database.js";
+import { firebaseConfig } from "./firebase.config.js";
 import NoteRouter from "./routes/note.js";
 import AuthRouter from "./routes/auth.js";
-import passport from "passport";
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+initializeApp(firebaseConfig);
 
 app.use(express.urlencoded({ extended: false }));
 
