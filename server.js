@@ -5,6 +5,7 @@ import passport from "passport";
 import { initializeApp } from "firebase/app";
 
 import "./database.js";
+import "./strategies/google0auth.js";
 import { firebaseConfig } from "./firebase.config.js";
 import NoteRouter from "./routes/note.js";
 import AuthRouter from "./routes/auth.js";
