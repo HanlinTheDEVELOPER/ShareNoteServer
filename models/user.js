@@ -20,6 +20,7 @@ const UserSchema = new mongoose.Schema(
       enum: ["free", "premium"],
       default: "free",
     },
+    refresh_tokens: [String],
   },
   {
     timestamps: true,

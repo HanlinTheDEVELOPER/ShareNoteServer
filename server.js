@@ -3,6 +3,7 @@ import session from "express-session";
 import { default as connectMongoDBSession } from "connect-mongodb-session";
 import passport from "passport";
 import { initializeApp } from "firebase/app";
+import cookieParser from "cookie-parser";
 
 import "./database.js";
 import "./strategies/google0auth.js";
@@ -14,7 +15,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 initializeApp(firebaseConfig);
-
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
 const MongoDBStore = connectMongoDBSession(session);

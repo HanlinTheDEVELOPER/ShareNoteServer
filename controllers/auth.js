@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import { errorResponse, successResponse } from "../lib/response.js";
 import uploadImage from "../lib/uploadImage.js";
+
 export const login = async (req, res) => {
   try {
     const { displayName, email, picture } = req.user;
@@ -25,15 +26,23 @@ export const login = async (req, res) => {
           );
       }
     }
-    const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      process.env.JWT_SECRET_KEY,
-      {
-        expiresIn: "1h",
-      }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_REFRESH_SECRET_KEY,
+      { expiresIn: "7d" }
     );
+
+    user.refresh_tokens = [...user.refresh_tokens, refreshToken];
+    await user.save();
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     req.session.destroy();
     res.status(StatusCodes.CREATED).json(
       successResponse(StatusCodes.CREATED, "Log In Success", {
@@ -86,6 +95,67 @@ export const updateProfile = async (req, res) => {
         errorResponse(
           StatusCodes.INTERNAL_SERVER_ERROR,
           "Internal Server Error"
+        )
+      );
+  }
+};
+
+export const generateRefreshToken = async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie?.jwt) {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json(errorResponse(StatusCodes.UNAUTHORIZED, "No Refresh Token"));
+  }
+  const refreshToken = cookie.jwt;
+  res.clearCookie("jwt", { httpOnly: true });
+  try {
+    const user = await User.findOne({ refresh_tokens: refreshToken });
+    if (!user) {
+      jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET_KEY,
+        async (err, decoded) => {
+          if (err) {
+            return res
+              .status(StatusCodes.FORBIDDEN)
+              .json(
+                errorResponse(StatusCodes.FORBIDDEN, "Invalid Refresh Token")
+              );
+          }
+          const faultUser = await User.findById(decoded.id);
+          if (!faultUser) {
+            return res
+              .status(StatusCodes.FORBIDDEN)
+              .json(
+                errorResponse(StatusCodes.FORBIDDEN, "Invalid Refresh Token")
+              );
+          }
+          faultUser.refresh_tokens = [];
+          await faultUser.save();
+        }
+      );
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json(errorResponse(StatusCodes.FORBIDDEN, "Invalid Refresh Token"));
+    }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: "1d",
+    });
+    res.status(StatusCodes.CREATED).json(
+      successResponse(StatusCodes.CREATED, "Refresh Token Success", {
+        token,
+        id: user._id,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        errorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Internal Server Error "
         )
       );
   }
