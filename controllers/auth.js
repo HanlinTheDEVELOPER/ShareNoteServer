@@ -27,7 +27,7 @@ export const login = async (req, res) => {
       }
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "1m",
     });
 
     const refreshToken = jwt.sign(
@@ -159,4 +159,12 @@ export const generateRefreshToken = async (req, res) => {
         )
       );
   }
+};
+
+export const checkIsLogin = async (req, res) => {
+  res.status(StatusCodes.OK).json(
+    successResponse(StatusCodes.OK, "Status OK", {
+      status: "OK",
+    })
+  );
 };

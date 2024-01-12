@@ -8,6 +8,8 @@ import { isAuthenticate } from "../middlewares/isAuthenticate.js";
 const authRouter = express.Router();
 const upload = multer();
 
+authRouter.get("/status", isAuthenticate, AuthController.checkIsLogin);
+
 authRouter.get(
   "/login",
   passport.authenticate("google", { scope: ["profile", "email"] })
