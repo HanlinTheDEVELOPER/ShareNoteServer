@@ -6,6 +6,7 @@ import { errorResponse, successResponse } from "../lib/response.js";
 import uploadImage from "../lib/uploadImage.js";
 
 export const login = async (req, res) => {
+  console.log("process.env.JWT_SECRET_KEY", process.env.JWT_EXPIRED_IN);
   try {
     const { displayName, email, picture } = req.user;
     let user = await User.findOne({ email });
@@ -33,7 +34,7 @@ export const login = async (req, res) => {
     const refreshToken = jwt.sign(
       { id: user.id },
       process.env.JWT_REFRESH_SECRET_KEY,
-      { expiresIn: "7d" }
+      { expiresIn: "1d" }
     );
 
     user.refresh_tokens = [...user.refresh_tokens, refreshToken];
@@ -100,9 +101,11 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-export const generateRefreshToken = async (req, res) => {
+export const generateNewToken = async (req, res) => {
+  console.log("generate,", req.cookies);
   const cookie = req.cookies;
   if (!cookie?.jwt) {
+    console.log("No Refresh adfasfasfToken");
     return res
       .status(StatusCodes.UNAUTHORIZED)
       .json(errorResponse(StatusCodes.UNAUTHORIZED, "No Refresh Token"));
@@ -111,13 +114,14 @@ export const generateRefreshToken = async (req, res) => {
   res.clearCookie("jwt", { httpOnly: true });
   try {
     const user = await User.findOne({ refresh_tokens: refreshToken });
+    //detect reuse
     if (!user) {
       jwt.verify(
         refreshToken,
         process.env.JWT_REFRESH_SECRET_KEY,
         async (err, decoded) => {
           if (err) {
-            return res
+            res
               .status(StatusCodes.FORBIDDEN)
               .json(
                 errorResponse(StatusCodes.FORBIDDEN, "Invalid Refresh Token")
@@ -139,9 +143,29 @@ export const generateRefreshToken = async (req, res) => {
         .status(StatusCodes.FORBIDDEN)
         .json(errorResponse(StatusCodes.FORBIDDEN, "Invalid Refresh Token"));
     }
+    const newRefreshTokens = user.refresh_tokens.filter(
+      (token) => token !== refreshToken
+    );
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1d",
+      expiresIn: "1m",
     });
+
+    const newRefreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET_KEY,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    res.cookie("jwt", newRefreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    user.refresh_tokens = [...newRefreshTokens, newRefreshToken];
+    await user.save();
+
     res.status(StatusCodes.CREATED).json(
       successResponse(StatusCodes.CREATED, "Refresh Token Success", {
         token,

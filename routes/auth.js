@@ -15,6 +15,8 @@ authRouter.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+authRouter.get("/refresh", AuthController.generateNewToken);
+
 authRouter.get(
   "/0auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
