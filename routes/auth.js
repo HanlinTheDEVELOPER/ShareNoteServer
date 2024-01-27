@@ -20,7 +20,7 @@ authRouter.get("/refresh", AuthController.generateNewToken);
 authRouter.get(
   "/0auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
-  (req, res) => res.redirect("/api/v1/auth/status")
+  (req, res) => res.redirect("https://www.google.com")
 );
 
 authRouter.put(
