@@ -1,5 +1,8 @@
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth2";
+import { login } from "../controllers/auth.js";
+import { response } from "express";
+import User from "../models/user.js";
 
 export default passport.use(
   new GoogleStrategy(
@@ -9,8 +12,17 @@ export default passport.use(
       callbackURL: process.env.REDIRECT_URL,
       passReqToCallback: true,
     },
-    function (request, accessToken, refreshToken, profile, done) {
-      done(null, profile);
+    async function (request, accessToken, refreshToken, profile, done) {
+      const { displayName, email, picture } = profile;
+      let user = await User.findOne({ email });
+      if (!user) {
+        user = await User.create({
+          name: displayName,
+          email,
+          avatar: picture,
+        });
+      }
+      done(null, user);
     }
   )
 );

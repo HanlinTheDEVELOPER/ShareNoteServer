@@ -6,35 +6,19 @@ import { errorResponse, successResponse } from "../lib/response.js";
 import uploadImage from "../lib/uploadImage.js";
 
 export const login = async (req, res) => {
-  console.log("process.env.JWT_SECRET_KEY", process.env.JWT_EXPIRED_IN);
   try {
-    const { displayName, email, picture } = req.user;
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await User.create({
-        name: displayName,
-        email,
-        avatar: picture,
-      });
-      if (!user) {
-        res
-          .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json(
-            errorResponse(
-              StatusCodes.INTERNAL_SERVER_ERROR,
-              "Internal Server Error"
-            )
-          );
-      }
-    }
+    const user = req.user;
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "1m",
     });
 
     const refreshToken = jwt.sign(
-      { id: user.id },
+      { id: user._id },
       process.env.JWT_REFRESH_SECRET_KEY,
-      { expiresIn: "1d" }
+      {
+        expiresIn: "1d",
+      }
     );
 
     user.refresh_tokens = [...user.refresh_tokens, refreshToken];

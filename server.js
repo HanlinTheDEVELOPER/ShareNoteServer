@@ -4,7 +4,9 @@ import { default as connectMongoDBSession } from "connect-mongodb-session";
 import passport from "passport";
 import { initializeApp } from "firebase/app";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
+import corsConfig from "./middlewares/cors.config.js";
 import "./database.js";
 import "./strategies/google0auth.js";
 import { firebaseConfig } from "./firebase.config.js";
@@ -14,6 +16,7 @@ import AuthRouter from "./routes/auth.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors(corsConfig));
 initializeApp(firebaseConfig);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
