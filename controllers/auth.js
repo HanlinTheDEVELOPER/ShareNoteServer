@@ -7,8 +7,9 @@ import uploadImage from "../lib/uploadImage.js";
 
 export const login = async (req, res) => {
   try {
-    const user = req.user;
-
+    const reqUser = req.query.user;
+    const id = atob(reqUser);
+    const user = await User.findById(id);
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "1m",
     });
@@ -86,10 +87,10 @@ export const updateProfile = async (req, res) => {
 };
 
 export const generateNewToken = async (req, res) => {
-  console.log("generate,", req.cookies);
+  console.log("generate,", req.cookies.jwt);
   const cookie = req.cookies;
   if (!cookie?.jwt) {
-    console.log("No Refresh adfasfasfToken");
+    console.log("No Refresh cookies");
     return res
       .status(StatusCodes.UNAUTHORIZED)
       .json(errorResponse(StatusCodes.UNAUTHORIZED, "No Refresh Token"));
@@ -170,6 +171,8 @@ export const generateNewToken = async (req, res) => {
 };
 
 export const checkIsLogin = async (req, res) => {
+  const id = req.user;
+  console.log("checkIsLogin", id);
   res.status(StatusCodes.OK).json(
     successResponse(StatusCodes.OK, "Status OK", {
       status: "OK",

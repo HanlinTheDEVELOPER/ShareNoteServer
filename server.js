@@ -6,7 +6,7 @@ import { initializeApp } from "firebase/app";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-import corsConfig from "./middlewares/cors.config.js";
+import corsConfig from "./middlewares/corsConfig.js";
 import "./database.js";
 import "./strategies/google0auth.js";
 import { firebaseConfig } from "./firebase.config.js";

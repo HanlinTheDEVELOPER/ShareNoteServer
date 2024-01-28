@@ -11,7 +11,7 @@ const upload = multer();
 authRouter.get("/status", isAuthenticate, AuthController.checkIsLogin);
 
 authRouter.get(
-  "/login",
+  "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
@@ -20,8 +20,11 @@ authRouter.get("/refresh", AuthController.generateNewToken);
 authRouter.get(
   "/0auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
-  (req, res) => res.redirect("https://www.google.com")
+  (req, res) =>
+    res.redirect("http://localhost:3000/login/?user=" + btoa(req.user._id))
 );
+
+authRouter.get("/login", AuthController.login);
 
 authRouter.put(
   "/updateProfile",
