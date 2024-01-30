@@ -21,7 +21,9 @@ authRouter.get(
   "/0auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
   (req, res) =>
-    res.redirect("http://localhost:3000/login/?user=" + btoa(req.user._id))
+    res.redirect(
+      process.env.ALLOW_ORIGIN + "/login/?user=" + btoa(req.user._id)
+    )
 );
 
 authRouter.get("/login", AuthController.login);

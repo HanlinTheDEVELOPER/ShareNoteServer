@@ -26,7 +26,9 @@ export const login = async (req, res) => {
     await user.save();
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
     });
 
     req.session.destroy();
@@ -74,7 +76,6 @@ export const updateProfile = async (req, res) => {
         successResponse(StatusCodes.ACCEPTED, "Update Profile Success", oldUser)
       );
   } catch (error) {
-    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
@@ -87,16 +88,14 @@ export const updateProfile = async (req, res) => {
 };
 
 export const generateNewToken = async (req, res) => {
-  console.log("generate,", req.cookies.jwt);
   const cookie = req.cookies;
   if (!cookie?.jwt) {
-    console.log("No Refresh cookies");
     return res
       .status(StatusCodes.UNAUTHORIZED)
       .json(errorResponse(StatusCodes.UNAUTHORIZED, "No Refresh Token"));
   }
   const refreshToken = cookie.jwt;
-  res.clearCookie("jwt", { httpOnly: true });
+  res.clearCookie("jwt", { httpOnly: true, sameSite: "Strict", secure: true });
   try {
     const user = await User.findOne({ refresh_tokens: refreshToken });
     //detect reuse
@@ -107,17 +106,23 @@ export const generateNewToken = async (req, res) => {
         async (err, decoded) => {
           if (err) {
             res
-              .status(StatusCodes.FORBIDDEN)
+              .status(StatusCodes.UNAUTHORIZED)
               .json(
-                errorResponse(StatusCodes.FORBIDDEN, "Invalid Refresh Token")
+                errorResponse(
+                  StatusCodes.UNAUTHORIZED,
+                  "NOt Found Invalid Refresh Token"
+                )
               );
           }
           const faultUser = await User.findById(decoded.id);
           if (!faultUser) {
             return res
-              .status(StatusCodes.FORBIDDEN)
+              .status(StatusCodes.UNAUTHORIZED)
               .json(
-                errorResponse(StatusCodes.FORBIDDEN, "Invalid Refresh Token")
+                errorResponse(
+                  StatusCodes.UNAUTHORIZED,
+                  "Falt User Not Found Invalid Refresh Token"
+                )
               );
           }
           faultUser.refresh_tokens = [];
@@ -125,8 +130,10 @@ export const generateNewToken = async (req, res) => {
         }
       );
       return res
-        .status(StatusCodes.FORBIDDEN)
-        .json(errorResponse(StatusCodes.FORBIDDEN, "Invalid Refresh Token"));
+        .status(StatusCodes.UNAUTHORIZED)
+        .json(
+          errorResponse(StatusCodes.UNAUTHORIZED, "Blah Invalid Refresh Token")
+        );
     }
     const newRefreshTokens = user.refresh_tokens.filter(
       (token) => token !== refreshToken
@@ -145,21 +152,22 @@ export const generateNewToken = async (req, res) => {
 
     res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
     });
 
     user.refresh_tokens = [...newRefreshTokens, newRefreshToken];
     await user.save();
 
-    res.status(StatusCodes.CREATED).json(
+    return res.status(StatusCodes.CREATED).json(
       successResponse(StatusCodes.CREATED, "Refresh Token Success", {
         token,
         id: user._id,
       })
     );
   } catch (error) {
-    console.log(error);
-    res
+    return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
         errorResponse(
@@ -172,10 +180,38 @@ export const generateNewToken = async (req, res) => {
 
 export const checkIsLogin = async (req, res) => {
   const id = req.user;
-  console.log("checkIsLogin", id);
+
   res.status(StatusCodes.OK).json(
     successResponse(StatusCodes.OK, "Status OK", {
       status: "OK",
     })
   );
+};
+
+export const logout = async (req, res) => {
+  const id = req.user;
+  try {
+    const user = await User.findById(id);
+    user.refresh_tokens = [];
+    await user.save();
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: true,
+    });
+    res.status(StatusCodes.OK).json(
+      successResponse(StatusCodes.OK, "Logout Success", {
+        status: "OK",
+      })
+    );
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        errorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Internal Server Error "
+        )
+      );
+  }
 };
