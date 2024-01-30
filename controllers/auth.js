@@ -192,6 +192,37 @@ export const logout = async (req, res) => {
   const id = req.user;
   try {
     const user = await User.findById(id);
+    const refreshToken = req.cookies?.jwt;
+    user.refresh_tokens = user.refresh_tokens.filter(
+      (token) => token !== refreshToken
+    );
+    await user.save();
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: true,
+    });
+    res.status(StatusCodes.OK).json(
+      successResponse(StatusCodes.OK, "Logout Success", {
+        status: "OK",
+      })
+    );
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        errorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Internal Server Error "
+        )
+      );
+  }
+};
+
+export const logoutOfAllDevices = async (req, res) => {
+  const id = req.user;
+  try {
+    const user = await User.findById(id);
     user.refresh_tokens = [];
     await user.save();
     res.clearCookie("jwt", {

@@ -8,14 +8,10 @@ import { isAuthenticate } from "../middlewares/isAuthenticate.js";
 const authRouter = express.Router();
 const upload = multer();
 
-authRouter.get("/status", isAuthenticate, AuthController.checkIsLogin);
-
 authRouter.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
-
-authRouter.get("/refresh", AuthController.generateNewToken);
 
 authRouter.get(
   "/0auth/google",
@@ -27,6 +23,9 @@ authRouter.get(
 );
 
 authRouter.get("/login", AuthController.login);
+authRouter.get("/status", isAuthenticate, AuthController.checkIsLogin);
+authRouter.get("/refresh", AuthController.generateNewToken);
+authRouter.get("/logout", isAuthenticate, AuthController.logout);
 
 authRouter.put(
   "/updateProfile",
