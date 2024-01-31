@@ -8,9 +8,8 @@ import {
 } from "../controllers/note.js ";
 import validate from "../middlewares/validateRequest.js";
 import createNoteSchema from "../Schema/createNote.schema.js";
-import { isAuthenticate } from "../middlewares/isAuthenticate.js";
-import { isAuthorize } from "../middlewares/isAuthorize.js";
-
+import isAuthenticate from "../middlewares/isAuthenticate.js";
+import isAuthorize from "../middlewares/isAuthorize.js";
 const NoteRouter = express.Router();
 
 NoteRouter.get("/", getAllNotes);

@@ -12,6 +12,7 @@ import "./strategies/google0auth.js";
 import { firebaseConfig } from "./firebase.config.js";
 import NoteRouter from "./routes/note.js";
 import AuthRouter from "./routes/auth.js";
+import UserRouter from "./routes/user.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -46,6 +47,7 @@ const router = express.Router();
 app.use("/api/v1", router);
 router.use("/notes", NoteRouter);
 router.use("/auth", AuthRouter);
+router.use("/users", UserRouter);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

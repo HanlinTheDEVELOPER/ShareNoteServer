@@ -88,6 +88,7 @@ export const updateProfile = async (req, res) => {
 };
 
 export const generateNewToken = async (req, res) => {
+  console.log(req);
   const cookie = req.cookies;
   if (!cookie?.jwt) {
     return res

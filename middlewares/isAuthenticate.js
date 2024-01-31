@@ -1,6 +1,6 @@
 import isJWTValid from "../lib/verifyJWT.js";
 
-export const isAuthenticate = (req, res, next) => {
+const isAuthenticate = (req, res, next) => {
   const decodedToken = isJWTValid(req, res);
 
   if (decodedToken) {
@@ -8,3 +8,5 @@ export const isAuthenticate = (req, res, next) => {
     next();
   }
 };
+
+export default isAuthenticate;

@@ -3,7 +3,7 @@ import passport from "passport";
 import multer from "multer";
 
 import * as AuthController from "../controllers/auth.js";
-import { isAuthenticate } from "../middlewares/isAuthenticate.js";
+import isAuthenticate from "../middlewares/isAuthenticate.js";
 
 const authRouter = express.Router();
 const upload = multer();
