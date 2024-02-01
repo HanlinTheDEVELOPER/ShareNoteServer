@@ -22,6 +22,13 @@ export const login = async (req, res) => {
       }
     );
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+    });
+
     user.refresh_tokens = [...user.refresh_tokens, refreshToken];
     await user.save();
     res.cookie("jwt", refreshToken, {
@@ -34,7 +41,6 @@ export const login = async (req, res) => {
     req.session.destroy();
     res.status(StatusCodes.CREATED).json(
       successResponse(StatusCodes.CREATED, "Log In Success", {
-        token,
         id: user._id,
       })
     );
@@ -88,7 +94,6 @@ export const updateProfile = async (req, res) => {
 };
 
 export const generateNewToken = async (req, res) => {
-  console.log(req);
   const cookie = req.cookies;
   if (!cookie?.jwt) {
     return res
@@ -151,6 +156,13 @@ export const generateNewToken = async (req, res) => {
       }
     );
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+    });
+
     res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
@@ -161,12 +173,7 @@ export const generateNewToken = async (req, res) => {
     user.refresh_tokens = [...newRefreshTokens, newRefreshToken];
     await user.save();
 
-    return res.status(StatusCodes.CREATED).json(
-      successResponse(StatusCodes.CREATED, "Refresh Token Success", {
-        token,
-        id: user._id,
-      })
-    );
+    res.redirect(req.query.fromUrl);
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)

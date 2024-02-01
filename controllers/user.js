@@ -10,6 +10,6 @@ export const getMe = async (req, res) => {
       .json(errorResponse(StatusCodes.NOT_FOUND, "User not found"));
   }
   return res
-    .status(StatusCodes.ACCEPTED)
-    .json(successResponse(StatusCodes.ACCEPTED, "Fetch Message Success", user));
+    .status(StatusCodes.OK)
+    .json(successResponse(StatusCodes.OK, "Fetch Message Success", user));
 };
