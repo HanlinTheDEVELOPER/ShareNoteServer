@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { seeds } from "./dummies/notes.js";
 
 const mongodb = process.env.MONGO_URL || "";
 
@@ -11,3 +12,5 @@ database.on("error", (err) => console.log(err));
 database.once("connected", () => {
   console.log("Connected to database");
 });
+
+// seeds();

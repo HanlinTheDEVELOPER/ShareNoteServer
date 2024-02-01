@@ -1,13 +1,5 @@
 import mongoose from "mongoose";
 
-const isReceiverRequire = (note) => {
-  console.log(note);
-  if (note.visibility === "public") {
-    return false;
-  }
-  return true;
-};
-
 const NoteSchema = new mongoose.Schema(
   {
     title: {
