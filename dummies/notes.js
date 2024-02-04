@@ -194,6 +194,7 @@ export function seeds() {
   const notes = data.map(async (note) => {
     const newNote = await Note.create({
       ...note,
+      slug: note.content.substr(0, 50),
       sender: note.sender[Math.floor(Math.random() * 3)],
     });
     return newNote;
