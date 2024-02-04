@@ -3,7 +3,11 @@ import { StatusCodes } from "http-status-codes";
 import { errorResponse, successResponse } from "../lib/response.js";
 
 export const getAllNotes = async (req, res) => {
-  const notes = await Note.find();
+  const notes = await Note.find().populate("sender", [
+    "name",
+    "email",
+    "avatar",
+  ]);
   if (!notes) {
     return res.status(500).json({ message: "internal server error" });
   }

@@ -9,6 +9,7 @@ export const login = async (req, res) => {
   try {
     const reqUser = req.query.user;
     const id = atob(reqUser);
+
     const user = await User.findById(id);
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "1m",
@@ -206,6 +207,11 @@ export const logout = async (req, res) => {
     );
     await user.save();
     res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: true,
+    });
+    res.clearCookie("token", {
       httpOnly: true,
       sameSite: "Strict",
       secure: true,
