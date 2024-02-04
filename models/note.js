@@ -8,6 +8,10 @@ const NoteSchema = new mongoose.Schema(
       min: 3,
       max: 50,
     },
+    slug: {
+      type: String,
+      required: true,
+    },
     content: {
       type: String,
       required: true,

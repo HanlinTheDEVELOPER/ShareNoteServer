@@ -20,7 +20,10 @@ export const getAllNotes = async (req, res) => {
 
 export const createNote = async (req, res) => {
   try {
-    const note = await Note.create(req.body);
+    const note = await Note.create({
+      ...req.body,
+      slug: req.body.content.substr(0, 50),
+    });
     return res
       .status(StatusCodes.CREATED)
       .json(successResponse(StatusCodes.CREATED, "Create Note Success", note));
@@ -51,9 +54,13 @@ export const showNoteById = async (req, res) => {
 export const updateNote = async (req, res) => {
   const { id } = req.params;
   try {
-    const updateNote = await Note.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const updateNote = await Note.findByIdAndUpdate(
+      id,
+      { ...req.body, slug: req.body.content.substr(0, 50) },
+      {
+        new: true,
+      }
+    );
     if (!updateNote) {
       return res
         .status(StatusCodes.NOT_FOUND)
