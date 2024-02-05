@@ -25,7 +25,7 @@ export const getAllNotes = async (req, res) => {
     .select("title slug ")
     .sort({ createdAt: -1 })
     .skip((currentPage - 1) * limit)
-    .limit(10)
+    .limit(limit)
     .populate("sender", ["name", "email", "avatar"]);
   if (!notes) {
     return res.status(500).json({ message: "internal server error" });
