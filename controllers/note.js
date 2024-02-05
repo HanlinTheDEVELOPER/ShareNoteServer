@@ -3,17 +3,40 @@ import { StatusCodes } from "http-status-codes";
 import { errorResponse, successResponse } from "../lib/response.js";
 
 export const getAllNotes = async (req, res) => {
+  const currentPage = req.query.page || 1;
+  const limit = req.query.limit || 24;
+  let totalNotes;
+  Note.find()
+    .countDocuments()
+    .then((count) => (totalNotes = count))
+    .catch((err) => {
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json(
+          errorResponse(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            "Internal Server Error",
+            err
+          )
+        );
+    });
+
   const notes = await Note.find()
     .select("title slug ")
+    .sort({ createdAt: -1 })
+    .skip((currentPage - 1) * limit)
+    .limit(10)
     .populate("sender", ["name", "email", "avatar"]);
   if (!notes) {
     return res.status(500).json({ message: "internal server error" });
   }
-  res
-    .status(StatusCodes.ACCEPTED)
-    .json(
-      successResponse(StatusCodes.ACCEPTED, "Fetch Message Success", notes)
-    );
+  res.status(StatusCodes.ACCEPTED).json(
+    successResponse(StatusCodes.ACCEPTED, "Fetch Message Success", {
+      notes,
+      totalPages: Math.ceil(totalNotes / limit),
+      currentPage,
+    })
+  );
 };
 
 export const createNote = async (req, res) => {
