@@ -18,16 +18,6 @@ const NoteSchema = new mongoose.Schema(
       min: 3,
       max: 1000,
     },
-    visibility: {
-      type: String,
-      enum: ["public", "private"],
-      default: "public",
-    },
-    receiver: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      nullable: true,
-    },
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -36,6 +26,10 @@ const NoteSchema = new mongoose.Schema(
     isViewed: {
       type: Boolean,
       default: false,
+    },
+    supports: {
+      type: Number,
+      default: 0,
     },
   },
 
