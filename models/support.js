@@ -14,3 +14,5 @@ const supportSchema = new mongoose.Schema({
     ref: "Note",
   },
 });
+
+export default mongoose.model("Support", supportSchema);

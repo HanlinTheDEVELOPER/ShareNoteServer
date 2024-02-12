@@ -23,10 +23,6 @@ const NoteSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    isViewed: {
-      type: Boolean,
-      default: false,
-    },
     supports: {
       type: Number,
       default: 0,

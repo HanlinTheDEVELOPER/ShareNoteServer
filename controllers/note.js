@@ -61,15 +61,20 @@ export const createNote = async (req, res) => {
 };
 
 export const showNoteById = async (req, res) => {
-  const note = await Note.findById(req.params.id);
+  const noteID = req.params.id;
+  const note = await Note.findOne({ _id: noteID }).populate("sender", [
+    "name",
+    "email",
+    "avatar",
+  ]);
   if (!note) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json(errorResponse(StatusCodes.NOT_FOUND, "Note not found"));
   }
   return res
-    .status(StatusCodes.ACCEPTED)
-    .json(successResponse(StatusCodes.ACCEPTED, "Fetch Message Success", note));
+    .status(StatusCodes.OK)
+    .json(successResponse(StatusCodes.OK, "Fetch Message Success", note));
 };
 
 export const updateNote = async (req, res) => {
