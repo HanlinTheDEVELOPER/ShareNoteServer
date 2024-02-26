@@ -22,7 +22,7 @@ export const getAllNotes = async (req, res) => {
     });
 
   const notes = await Note.find()
-    .select("title slug ")
+    .select("title slug createdAt supports")
     .sort({ createdAt: -1 })
     .skip((currentPage - 1) * limit)
     .limit(limit)
