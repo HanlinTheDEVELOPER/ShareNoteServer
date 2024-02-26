@@ -5,6 +5,7 @@ import passport from "passport";
 import { initializeApp } from "firebase/app";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import bodyParser from "body-parser";
 
 import corsConfig from "./middlewares/corsConfig.js";
 import "./database.js";
@@ -20,7 +21,9 @@ const port = process.env.PORT || 3000;
 app.use(cors(corsConfig));
 initializeApp(firebaseConfig);
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({

@@ -67,11 +67,14 @@ export const failure = (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
+  // console.log(req);
+  // return res.json({ h: "se" });
   const oldUser = await User.findById(req.user);
   let avatar_url = oldUser.avatar;
   if (req.file) {
     avatar_url = await uploadImage(req, res);
   }
+  console.log(oldUser);
   try {
     oldUser.name = req.body.name;
     oldUser.avatar = avatar_url;
@@ -83,7 +86,9 @@ export const updateProfile = async (req, res) => {
         successResponse(StatusCodes.ACCEPTED, "Update Profile Success", oldUser)
       );
   } catch (error) {
+    console.log(error);
     return res
+
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
         errorResponse(
