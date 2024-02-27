@@ -98,7 +98,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-export const generateNewToken = async (req, res) => {
+export const generateNewToken = async (req, res, next) => {
   const cookie = req.cookies;
   if (!cookie?.jwt) {
     return res
@@ -182,8 +182,8 @@ export const generateNewToken = async (req, res) => {
       ...user,
       refresh_tokens: [...newRefreshTokens, newRefreshToken],
     });
-
-    res.redirect(req.query.fromUrl);
+    req.user = user._id;
+    next();
   } catch (error) {
     console.log(error);
     return res
