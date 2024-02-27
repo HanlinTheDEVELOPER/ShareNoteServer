@@ -30,13 +30,14 @@ export const login = async (req, res) => {
       secure: true,
     });
 
-    user.refresh_tokens = [...user.refresh_tokens, refreshToken];
-    await user.save();
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "none",
       secure: true,
+    });
+    await User.findByIdAndUpdate(user._id, {
+      refresh_tokens: [...user.refresh_tokens, refreshToken],
     });
 
     req.session.destroy();
@@ -67,18 +68,16 @@ export const failure = (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-  // console.log(req);
-  // return res.json({ h: "se" });
   const oldUser = await User.findById(req.user);
   let avatar_url = oldUser.avatar;
   if (req.file) {
     avatar_url = await uploadImage(req, res);
   }
-  console.log(oldUser);
+
   try {
-    oldUser.name = req.body.name;
-    oldUser.avatar = avatar_url;
-    oldUser.plan = req.body.plan;
+    oldUser.name = req.body.name ?? oldUser.name;
+    oldUser.avatar = avatar_url ?? oldUser.avatar;
+    oldUser.plan = req.body.plan ?? oldUser.plan;
     await oldUser.save();
     res
       .status(StatusCodes.ACCEPTED)
@@ -108,6 +107,7 @@ export const generateNewToken = async (req, res) => {
   }
   const refreshToken = cookie.jwt;
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+  res.clearCookie("token", { httpOnly: true, sameSite: "None", secure: true });
   try {
     const user = await User.findOne({ refresh_tokens: refreshToken });
     //detect reuse
@@ -138,7 +138,9 @@ export const generateNewToken = async (req, res) => {
               );
           }
           faultUser.refresh_tokens = [];
-          await faultUser.save();
+          await User.findByIdAndUpdate(faultUser._id, {
+            refresh_tokens: [],
+          });
         }
       );
       return res
@@ -176,17 +178,21 @@ export const generateNewToken = async (req, res) => {
       secure: true,
     });
 
-    user.refresh_tokens = [...newRefreshTokens, newRefreshToken];
-    await user.save();
+    await User.findByIdAndUpdate(user._id, {
+      ...user,
+      refresh_tokens: [...newRefreshTokens, newRefreshToken],
+    });
 
     res.redirect(req.query.fromUrl);
   } catch (error) {
+    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
         errorResponse(
           StatusCodes.INTERNAL_SERVER_ERROR,
-          "Internal Server Error "
+          "Internal Server Error ",
+          error
         )
       );
   }
@@ -207,10 +213,12 @@ export const logout = async (req, res) => {
   try {
     const user = await User.findById(id);
     const refreshToken = req.cookies?.jwt;
-    user.refresh_tokens = user.refresh_tokens.filter(
-      (token) => token !== refreshToken
-    );
-    await user.save();
+
+    await User.findByIdAndUpdate(user._id, {
+      refresh_tokens: user.refresh_tokens.filter(
+        (token) => token !== refreshToken
+      ),
+    });
     res.clearCookie("jwt", {
       httpOnly: true,
       sameSite: "Strict",
@@ -227,12 +235,14 @@ export const logout = async (req, res) => {
       })
     );
   } catch (error) {
+    console.log(error);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
         errorResponse(
           StatusCodes.INTERNAL_SERVER_ERROR,
-          "Internal Server Error "
+          "Internal Server Error ",
+          error
         )
       );
   }
@@ -242,8 +252,11 @@ export const logoutOfAllDevices = async (req, res) => {
   const id = req.user;
   try {
     const user = await User.findById(id);
-    user.refresh_tokens = [];
-    await user.save();
+
+    await User.findByIdAndUpdate(user._id, {
+      ...user,
+      refresh_tokens: [],
+    });
     res.clearCookie("jwt", {
       httpOnly: true,
       sameSite: "Strict",
