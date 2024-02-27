@@ -4,7 +4,6 @@ import User from "../models/user.js";
 import { StatusCodes } from "http-status-codes";
 
 export const getMe = async (req, res) => {
-  console.log(req.user);
   const user = await User.findById(req.user).select("-refresh_tokens");
   if (!user) {
     return res

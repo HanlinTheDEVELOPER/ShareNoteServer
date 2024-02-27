@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import { errorResponse, successResponse } from "../lib/response.js";
 import uploadImage from "../lib/uploadImage.js";
+import { deleteImage } from "../lib/deleteImage.js";
 
 export const login = async (req, res) => {
   try {
@@ -72,6 +73,7 @@ export const updateProfile = async (req, res) => {
   let avatar_url = oldUser.avatar;
   if (req.file) {
     avatar_url = await uploadImage(req, res);
+    deleteImage(oldUser.avatar);
   }
 
   try {

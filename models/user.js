@@ -15,10 +15,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    plan: {
-      type: String,
-      enum: ["free", "premium"],
-      default: "free",
+    gems: {
+      type: Number,
+      default: 0,
     },
     refresh_tokens: [String],
   },
