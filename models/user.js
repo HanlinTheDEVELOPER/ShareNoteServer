@@ -6,6 +6,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: true,
@@ -18,6 +22,10 @@ const UserSchema = new mongoose.Schema(
     gems: {
       type: Number,
       default: 0,
+    },
+    tags: {
+      type: [String] || null,
+      default: null,
     },
     refresh_tokens: [String],
   },

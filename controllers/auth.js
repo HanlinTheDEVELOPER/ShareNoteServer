@@ -45,6 +45,8 @@ export const login = async (req, res) => {
     res.status(StatusCodes.CREATED).json(
       successResponse(StatusCodes.CREATED, "Log In Success", {
         id: user._id,
+        tags: user.tags,
+        slug: user.slug,
       })
     );
   } catch (error) {
