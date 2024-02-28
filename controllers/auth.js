@@ -126,7 +126,7 @@ export const generateNewToken = async (req, res, next) => {
               .json(
                 errorResponse(
                   StatusCodes.UNAUTHORIZED,
-                  "NOt Found Invalid Refresh Token"
+                  "Not Found Invalid Refresh Token"
                 )
               );
           }
