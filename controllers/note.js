@@ -26,12 +26,12 @@ export const getAllNotes = async (req, res) => {
     .sort({ createdAt: -1 })
     .skip((currentPage - 1) * limit)
     .limit(limit)
-    .populate("sender", ["name", "email", "avatar"]);
+    .populate("user", ["name", "email", "avatar"]);
   if (!notes) {
     return res.status(500).json({ message: "internal server error" });
   }
-  res.status(StatusCodes.ACCEPTED).json(
-    successResponse(StatusCodes.ACCEPTED, "Fetch Message Success", {
+  res.status(StatusCodes.OK).json(
+    successResponse(StatusCodes.OK, "Fetch Message Success", {
       notes,
       totalPages: Math.ceil(totalNotes / limit),
       currentPage,
@@ -62,7 +62,7 @@ export const createNote = async (req, res) => {
 
 export const showNoteById = async (req, res) => {
   const noteID = req.params.id;
-  const note = await Note.findOne({ _id: noteID }).populate("sender", [
+  const note = await Note.findOne({ _id: noteID }).populate("user", [
     "name",
     "email",
     "avatar",

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { seeds } from "./dummies/notes.js";
+import { seeds } from "./dummies/seed.js";
 
 const mongodb = process.env.MONGO_URL || "";
 

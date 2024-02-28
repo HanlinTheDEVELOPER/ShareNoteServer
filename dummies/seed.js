@@ -1,4 +1,5 @@
 import Note from "../models/note.js";
+import { Tag } from "../models/tag.js";
 
 export const data = [
   {
@@ -10,6 +11,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -21,6 +25,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -32,6 +39,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -43,6 +53,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -54,6 +67,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -65,6 +81,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -76,6 +95,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -87,6 +109,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -98,6 +123,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -109,6 +137,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -120,6 +151,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -131,6 +165,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -142,6 +179,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -153,6 +193,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -164,6 +207,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -175,6 +221,9 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
   {
@@ -186,8 +235,52 @@ export const data = [
       "6592f4178993c81cf2752400",
       "65b613956a934c82ad3aef10",
       "65b668f6deef69ce11c150d1",
+      "65bfcf2a7da94d3fc04b55cc",
+      "65c78ad7625bae2bdc50aea0",
+      "65dc47669bb32630d5e8a41f",
     ],
   },
+];
+
+export const tags = [
+  "AI",
+  "Anime",
+  "Art",
+  "Astrology",
+  "Book",
+  "Cyber Sec",
+  "Dev Ops",
+  "Donghua",
+  "Economy",
+  "Education",
+  "Environment",
+  "Esport",
+  "Estate",
+  "Food",
+  "Games",
+  "Health",
+  "IOT",
+  "International Affair",
+  "Languages",
+  "Manga",
+  "Manhwa",
+  "Maths",
+  "Machine Learning",
+  "Mobile Dev",
+  "Movie",
+  "Music",
+  "Networking",
+  "Pets",
+  "Politic",
+  "Programming",
+  "Religion",
+  "Robotic",
+  "Science",
+  "Sport",
+  "Tech News",
+  "Tour",
+  "Vehicle",
+  "Web Dev",
 ];
 
 export function seeds() {
@@ -195,8 +288,13 @@ export function seeds() {
     const newNote = await Note.create({
       ...note,
       slug: note.content.substr(0, 50),
-      sender: note.sender[Math.floor(Math.random() * 3)],
+      user: note.sender[Math.floor(Math.random() * 6)],
+      supports: Math.floor(Math.random() * 1000),
     });
     return newNote;
   });
+  // const tagLists = tags.map(async (tag) => {
+  //   const newTag = await Tag.create({ name: tag });
+  //   return newTag;
+  // });
 }

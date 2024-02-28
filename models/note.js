@@ -18,7 +18,7 @@ const NoteSchema = new mongoose.Schema(
       min: 3,
       max: 1000,
     },
-    sender: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

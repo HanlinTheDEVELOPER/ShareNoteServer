@@ -17,7 +17,7 @@ const createNoteSchema = z
         "visibility must be either public or private"
       )
       .default("public"),
-    sender: z
+    user: z
       .string()
       .refine(
         (val) => mongoose.Types.ObjectId.isValid(val),
