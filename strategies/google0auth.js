@@ -19,7 +19,7 @@ export default passport.use(
       if (!user) {
         user = await User.create({
           name: displayName,
-          slug: generateUniqueSlug(displayName),
+          slug: await generateUniqueSlug(displayName),
           email,
           avatar: picture,
         });
