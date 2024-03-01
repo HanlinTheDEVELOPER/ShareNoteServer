@@ -3,8 +3,6 @@ import jwt from "jsonwebtoken";
 
 import User from "../models/user.js";
 import { errorResponse, successResponse } from "../lib/response.js";
-import uploadImage from "../lib/uploadImage.js";
-import { deleteImage } from "../lib/deleteImage.js";
 
 export const login = async (req, res) => {
   try {
@@ -45,8 +43,6 @@ export const login = async (req, res) => {
     res.status(StatusCodes.CREATED).json(
       successResponse(StatusCodes.CREATED, "Log In Success", {
         id: user._id,
-        tags: user.tags,
-        slug: user.slug,
       })
     );
   } catch (error) {
@@ -68,38 +64,6 @@ export const failure = (req, res) => {
     .json(
       errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Internal Server Error")
     );
-};
-
-export const updateProfile = async (req, res) => {
-  const oldUser = await User.findById(req.user);
-  let avatar_url = oldUser.avatar;
-  if (req.file) {
-    avatar_url = await uploadImage(req, res);
-    deleteImage(oldUser.avatar);
-  }
-
-  try {
-    oldUser.name = req.body.name ?? oldUser.name;
-    oldUser.avatar = avatar_url ?? oldUser.avatar;
-    oldUser.plan = req.body.plan ?? oldUser.plan;
-    await oldUser.save();
-    res
-      .status(StatusCodes.ACCEPTED)
-      .json(
-        successResponse(StatusCodes.ACCEPTED, "Update Profile Success", oldUser)
-      );
-  } catch (error) {
-    console.log(error);
-    return res
-
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json(
-        errorResponse(
-          StatusCodes.INTERNAL_SERVER_ERROR,
-          "Internal Server Error"
-        )
-      );
-  }
 };
 
 export const generateNewToken = async (req, res, next) => {

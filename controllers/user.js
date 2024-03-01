@@ -2,6 +2,8 @@ import { errorResponse, successResponse } from "../lib/response.js";
 import Note from "../models/note.js";
 import User from "../models/user.js";
 import { StatusCodes } from "http-status-codes";
+import uploadImage from "../lib/uploadImage.js";
+import { deleteImage } from "../lib/deleteImage.js";
 
 export const getMe = async (req, res) => {
   const user = await User.findById(req.user).select("-refresh_tokens");
@@ -59,4 +61,61 @@ export const getNotesToMe = async (req, res) => {
       currentPage,
     })
   );
+};
+
+export const updateProfile = async (req, res) => {
+  const oldUser = await User.findById(req.user);
+  let avatar_url = oldUser.avatar;
+  if (req.file) {
+    avatar_url = await uploadImage(req, res);
+    deleteImage(oldUser.avatar);
+  }
+
+  try {
+    oldUser.name = req.body.name ?? oldUser.name;
+    oldUser.avatar = avatar_url ?? oldUser.avatar;
+    oldUser.plan = req.body.plan ?? oldUser.plan;
+    await oldUser.save();
+    res
+      .status(StatusCodes.ACCEPTED)
+      .json(
+        successResponse(StatusCodes.ACCEPTED, "Update Profile Success", oldUser)
+      );
+  } catch (error) {
+    console.log(error);
+    return res
+
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        errorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Internal Server Error"
+        )
+      );
+  }
+};
+
+export const updateTagsAndUserName = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.user, {
+      name: req.body.name,
+      tags: req.body.tags,
+    });
+    return res
+      .status(StatusCodes.OK)
+      .json(
+        successResponse(StatusCodes.ACCEPTED, "Set Up Account Complete", user)
+      );
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        successResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Set Up Account Failed",
+          error
+        )
+      );
+  }
 };
