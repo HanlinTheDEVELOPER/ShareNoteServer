@@ -43,6 +43,7 @@ export const login = async (req, res) => {
     res.status(StatusCodes.CREATED).json(
       successResponse(StatusCodes.CREATED, "Log In Success", {
         id: user._id,
+        tags: user.tags,
       })
     );
   } catch (error) {
@@ -182,11 +183,16 @@ export const logout = async (req, res) => {
     const user = await User.findById(id);
     const refreshToken = req.cookies?.jwt;
 
-    await User.findByIdAndUpdate(user._id, {
-      refresh_tokens: user.refresh_tokens.filter(
-        (token) => token !== refreshToken
-      ),
-    });
+    if (user && refreshToken) {
+      await User.findOneAndUpdate(
+        { refresh_tokens: refreshToken },
+        {
+          refresh_tokens: user.refresh_tokens.filter(
+            (token) => token !== refreshToken
+          ),
+        }
+      );
+    }
     res.clearCookie("jwt", {
       httpOnly: true,
       sameSite: "Strict",
