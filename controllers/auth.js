@@ -170,12 +170,14 @@ export const generateNewToken = async (req, res, next) => {
 export const checkIsLogin = async (req, res) => {
   const id = req.user;
   const user = await User.findById(id).select("tags");
-  res.status(StatusCodes.OK).json(
-    successResponse(StatusCodes.OK, "Status OK", {
-      id: user._id,
-      tags: user.tags,
-    })
-  );
+  if (user) {
+    res.status(StatusCodes.OK).json(
+      successResponse(StatusCodes.OK, "Status OK", {
+        id: user?._id,
+        tags: user?.tags,
+      })
+    );
+  }
 };
 
 export const logout = async (req, res) => {
