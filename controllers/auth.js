@@ -11,20 +11,20 @@ export const login = async (req, res) => {
 
     const user = await User.findById(id);
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1m",
+      expiresIn: "50m",
     });
 
     const refreshToken = jwt.sign(
       { id: user._id },
       process.env.JWT_REFRESH_SECRET_KEY,
       {
-        expiresIn: "1d",
+        expiresIn: "30d",
       }
     );
 
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       secure: true,
     });
@@ -122,20 +122,20 @@ export const generateNewToken = async (req, res, next) => {
       (token) => token !== refreshToken
     );
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1m",
+      expiresIn: "50m",
     });
 
     const newRefreshToken = jwt.sign(
       { id: user._id },
       process.env.JWT_REFRESH_SECRET_KEY,
       {
-        expiresIn: "1d",
+        expiresIn: "30d",
       }
     );
 
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       secure: true,
     });
@@ -169,10 +169,11 @@ export const generateNewToken = async (req, res, next) => {
 
 export const checkIsLogin = async (req, res) => {
   const id = req.user;
-
+  const user = await User.findById(id).select("tags");
   res.status(StatusCodes.OK).json(
     successResponse(StatusCodes.OK, "Status OK", {
-      status: "OK",
+      id: user._id,
+      tags: user.tags,
     })
   );
 };
