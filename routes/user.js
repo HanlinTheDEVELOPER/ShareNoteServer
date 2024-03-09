@@ -22,5 +22,11 @@ userRouter.post(
 );
 
 userRouter.post("/setup", isAuthenticate, UserController.updateTagsAndUserName);
+userRouter.get("/profile", UserController.getProfile);
+userRouter.post(
+  "/changeUsername",
+  isAuthenticate,
+  UserController.changeUsername
+);
 
 export default userRouter;

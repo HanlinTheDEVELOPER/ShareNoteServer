@@ -5,6 +5,19 @@ import { StatusCodes } from "http-status-codes";
 import uploadImage from "../lib/uploadImage.js";
 import { deleteImage } from "../lib/deleteImage.js";
 
+export const getProfile = async (req, res) => {
+  const slug = req.query.slug;
+  const profile = await User.findOne({ slug });
+  if (!profile) {
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json(errorResponse(StatusCodes.NOT_FOUND, "User not Found"));
+  }
+  return res
+    .status(StatusCodes.OK)
+    .json(successResponse(StatusCodes.OK, "Fetch Profile Success", profile));
+};
+
 export const getMe = async (req, res) => {
   const user = await User.findById(req.user).select("-refresh_tokens");
   if (!user) {
@@ -117,5 +130,32 @@ export const updateTagsAndUserName = async (req, res) => {
           error
         )
       );
+  }
+};
+
+export const changeUsername = async (req, res) => {
+  const id = req.user;
+  const name = req.body.name;
+  try {
+    const updateUserWithNewName = await User.findByIdAndUpdate(
+      id,
+      {
+        name,
+      },
+      { new: true }
+    );
+    return res
+      .status(StatusCodes.OK)
+      .json(
+        successResponse(
+          StatusCodes.OK,
+          "Update Username Success.",
+          updateUserWithNewName
+        )
+      );
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(errorResponse(StatusCodes.INTERNAL_SERVER_ERROR), "failed", error);
   }
 };
