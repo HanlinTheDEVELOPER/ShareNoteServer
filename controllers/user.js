@@ -135,8 +135,8 @@ export const updateTagsAndUserName = async (req, res) => {
 
 export const changeUsername = async (req, res) => {
   const id = req.user;
-  const name = req.body.name;
   try {
+    const name = req.body.name;
     const updateUserWithNewName = await User.findByIdAndUpdate(
       id,
       {
@@ -157,5 +157,33 @@ export const changeUsername = async (req, res) => {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(errorResponse(StatusCodes.INTERNAL_SERVER_ERROR), "failed", error);
+  }
+};
+
+export const updateTags = async (req, res) => {
+  const id = req?.user;
+  try {
+    const tags = req.body.tags;
+
+    const updateUser = await User.findByIdAndUpdate(
+      id,
+      {
+        tags,
+      },
+      { new: true }
+    );
+    return res
+      .status(StatusCodes.OK)
+      .json(successResponse(StatusCodes.OK, "Update Tags Success", updateUser));
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        errorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Update Tags Failed",
+          error
+        )
+      );
   }
 };

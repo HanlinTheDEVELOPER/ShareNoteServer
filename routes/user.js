@@ -28,5 +28,6 @@ userRouter.post(
   isAuthenticate,
   UserController.changeUsername
 );
+userRouter.post("/updateTags", isAuthenticate, UserController.updateTags);
 
 export default userRouter;
