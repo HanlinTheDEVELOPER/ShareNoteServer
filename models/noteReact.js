@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
 
-const userFollowSchema = new mongoose.Schema({
-  userId: {
+const noteReactSchema = new mongoose.Schema({
+  noteId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
     required: true,
+    ref: "Note",
   },
-  follower: [
+  likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
   ],
-  following: [
+  dislikes: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -20,4 +20,4 @@ const userFollowSchema = new mongoose.Schema({
   ],
 });
 
-export default mongoose.model("UserFollow", userFollowSchema);
+export default mongoose.model("NoteReact", noteReactSchema);
