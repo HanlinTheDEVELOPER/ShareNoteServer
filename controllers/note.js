@@ -5,6 +5,7 @@ import { errorResponse, successResponse } from "../lib/response.js";
 export const getAllNotes = async (req, res) => {
   const currentPage = req.query.page || 1;
   const limit = req.query.limit || 24;
+  const tag = req.query.tag;
   let totalNotes;
   Note.find()
     .countDocuments()
@@ -21,7 +22,7 @@ export const getAllNotes = async (req, res) => {
         );
     });
 
-  const notes = await Note.find()
+  const notes = await Note.find(tag ? { tags: tag } : {})
     .select("title slug createdAt supports")
     .sort({ createdAt: -1 })
     .skip((currentPage - 1) * limit)

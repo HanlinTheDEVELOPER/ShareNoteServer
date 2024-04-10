@@ -23,6 +23,10 @@ const NoteSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    tags: {
+      type: [String],
+      required: true,
+    },
     supports: {
       type: Number,
       default: 0,

@@ -75,8 +75,8 @@ export const generateNewToken = async (req, res, next) => {
       .json(errorResponse(StatusCodes.UNAUTHORIZED, "No Refresh Token"));
   }
   const refreshToken = cookie.jwt;
-  res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-  res.clearCookie("token", { httpOnly: true, sameSite: "None", secure: true });
+  res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true });
+  res.clearCookie("token", { httpOnly: true, sameSite: "none", secure: true });
   try {
     const user = await User.findOne({ refresh_tokens: refreshToken });
     //detect reuse
