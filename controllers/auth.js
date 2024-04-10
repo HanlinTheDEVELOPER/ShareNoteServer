@@ -198,12 +198,12 @@ export const logout = async (req, res) => {
     }
     res.clearCookie("jwt", {
       httpOnly: true,
-      sameSite: "Strict",
+      sameSite: "none",
       secure: true,
     });
     res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "Strict",
+      sameSite: "none",
       secure: true,
     });
     res.status(StatusCodes.OK).json(
@@ -236,7 +236,7 @@ export const logoutOfAllDevices = async (req, res) => {
     });
     res.clearCookie("jwt", {
       httpOnly: true,
-      sameSite: "Strict",
+      sameSite: "none",
       secure: true,
     });
     res.status(StatusCodes.OK).json(
