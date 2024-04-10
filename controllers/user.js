@@ -4,18 +4,28 @@ import User from "../models/user.js";
 import { StatusCodes } from "http-status-codes";
 import uploadImage from "../lib/uploadImage.js";
 import { deleteImage } from "../lib/deleteImage.js";
+import isFollow from "../lib/isFollow.js";
 
 export const getProfile = async (req, res) => {
   const slug = req.query.slug;
-  const profile = await User.findOne({ slug });
+  const isFollowing = await isFollow(req, slug);
+  console.log(isFollowing);
+  const profile = await User.findOne({ slug }).select(
+    "name slug email avatar tags"
+  );
+
   if (!profile) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json(errorResponse(StatusCodes.NOT_FOUND, "User not Found"));
   }
-  return res
-    .status(StatusCodes.OK)
-    .json(successResponse(StatusCodes.OK, "Fetch Profile Success", profile));
+
+  return res.status(StatusCodes.OK).json(
+    successResponse(StatusCodes.OK, "Fetch Profile Success", {
+      ...profile._doc,
+      isFollowing,
+    })
+  );
 };
 
 export const getMe = async (req, res) => {

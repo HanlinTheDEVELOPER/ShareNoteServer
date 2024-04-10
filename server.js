@@ -14,6 +14,7 @@ import { firebaseConfig } from "./firebase.config.js";
 import NoteRouter from "./routes/note.js";
 import AuthRouter from "./routes/auth.js";
 import UserRouter from "./routes/user.js";
+import UserFollowRouter from "./routes/userFollow.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -51,7 +52,7 @@ app.use("/api/v1", router);
 router.use("/notes", NoteRouter);
 router.use("/auth", AuthRouter);
 router.use("/users", UserRouter);
-
+router.use("/follow", UserFollowRouter);
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
