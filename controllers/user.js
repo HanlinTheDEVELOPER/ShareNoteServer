@@ -8,8 +8,9 @@ import isFollow from "../lib/isFollow.js";
 
 export const getProfile = async (req, res) => {
   const slug = req.query.slug;
-  const isFollowing = await isFollow(req, slug);
-  console.log(isFollowing);
+  const userId = req.get("userId");
+  const isFollowing = await isFollow(userId, slug);
+
   const profile = await User.findOne({ slug }).select(
     "name slug email avatar tags"
   );
