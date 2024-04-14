@@ -7,10 +7,18 @@ export const follow = async (req, res) => {
   try {
     const profileId = req.body.profileId;
     const userId = req.user;
-    const followList = await UserFollow.findOne({
+    let followList = await UserFollow.findOne({
       userId,
       following: { $ne: profileId }, //fetch item not including profile id in following field arr
     }).select("following");
+
+    if (!followList) {
+      followList = await UserFollow.create({
+        userId,
+        following: [],
+        follower: [],
+      });
+    }
 
     //array.push change original array
     followList?.following?.push(profileId);
