@@ -15,8 +15,6 @@ const NoteSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
-      min: 3,
-      max: 1000,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
