@@ -44,7 +44,7 @@ export const createNote = async (req, res) => {
   try {
     const note = await Note.create({
       ...req.body,
-      slug: req.body.content.substr(0, 50),
+      slug: req.body.title.substr(0, 50),
     });
     return res
       .status(StatusCodes.CREATED)

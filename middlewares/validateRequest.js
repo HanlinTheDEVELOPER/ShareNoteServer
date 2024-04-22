@@ -3,7 +3,7 @@ import { errorResponse } from "../lib/response.js";
 const validate = (schema) => async (req, res, next) => {
   try {
     const data = await schema.parse(req.body, { abortEarly: false });
-    console.log(data);
+    // console.log(data);
     next();
   } catch (error) {
     const original = error.issues;
