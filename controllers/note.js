@@ -24,7 +24,7 @@ export const getAllNotes = async (req, res) => {
 
   const filter = tag === "Recommends" || tag === undefined ? {} : { tags: tag };
 
-  const notes = await Note.find()
+  const notes = await Note.find(filter)
     .select("title slug createdAt supports")
     .sort({ createdAt: -1 })
     .skip((currentPage - 1) * limit)
