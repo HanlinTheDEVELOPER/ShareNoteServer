@@ -22,7 +22,9 @@ export const getAllNotes = async (req, res) => {
         );
     });
 
-  const notes = await Note.find(tag ? { tags: tag } : {})
+  const filter = tag === "Recommends" || tag === undefined ? {} : { tags: tag };
+
+  const notes = await Note.find()
     .select("title slug createdAt supports")
     .sort({ createdAt: -1 })
     .skip((currentPage - 1) * limit)
