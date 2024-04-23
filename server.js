@@ -23,8 +23,9 @@ app.use(cors(corsConfig));
 initializeApp(firebaseConfig);
 app.use(cookieParser());
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+// app.use(bodyParser());
 
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({
