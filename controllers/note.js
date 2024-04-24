@@ -83,7 +83,7 @@ export const getNoteBySlug = async (req, res) => {
   }
   const userId = req.get("userId");
   const isFollowing = await isFollow(userId, note.user.slug);
-  console.log(isFollowing);
+
   return res.status(StatusCodes.OK).json(
     successResponse(StatusCodes.OK, "Fetch Message Success", {
       ...note._doc,
@@ -141,5 +141,21 @@ export const deleteNote = async (req, res) => {
           "Internal Server Error"
         )
       );
+  }
+};
+
+export const addSupports = async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const note = await Note.findOne({ slug }).select("supports");
+    await Note.findOneAndUpdate({ slug }, { supports: note.supports + 1 });
+    return res
+      .status(StatusCodes.OK)
+      .json(successResponse(StatusCodes.OK, "Added Supports", {}));
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed", {}));
   }
 };
