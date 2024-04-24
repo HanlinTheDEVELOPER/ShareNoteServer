@@ -11,7 +11,7 @@ export const login = async (req, res) => {
 
     const user = await User.findById(id);
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "50m",
+      expiresIn: "1d",
     });
 
     const refreshToken = jwt.sign(
@@ -31,7 +31,7 @@ export const login = async (req, res) => {
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       secure: true,
     });
@@ -122,7 +122,7 @@ export const generateNewToken = async (req, res, next) => {
       (token) => token !== refreshToken
     );
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "50m",
+      expiresIn: "1d",
     });
 
     const newRefreshToken = jwt.sign(
@@ -142,7 +142,7 @@ export const generateNewToken = async (req, res, next) => {
 
     res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       secure: true,
     });
