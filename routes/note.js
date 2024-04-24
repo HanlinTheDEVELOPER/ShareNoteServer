@@ -2,7 +2,7 @@ import express from "express";
 import {
   getAllNotes,
   createNote,
-  showNoteById,
+  getNoteBySlug,
   updateNote,
   deleteNote,
 } from "../controllers/note.js ";
@@ -13,7 +13,7 @@ const NoteRouter = express.Router();
 
 NoteRouter.get("/", getAllNotes);
 NoteRouter.post("/", isAuthenticate, validate(createNoteSchema), createNote);
-NoteRouter.get("/:id", showNoteById);
+NoteRouter.get("/:slug", getNoteBySlug);
 NoteRouter.put("/:id", isAuthenticate, validate(createNoteSchema), updateNote);
 NoteRouter.delete("/:id", isAuthenticate, deleteNote);
 

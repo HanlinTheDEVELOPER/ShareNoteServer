@@ -1,6 +1,7 @@
 import Note from "../models/note.js";
 import { StatusCodes } from "http-status-codes";
 import { errorResponse, successResponse } from "../lib/response.js";
+import isFollow from "../lib/isFollow.js";
 
 export const getAllNotes = async (req, res) => {
   const currentPage = req.query.page || 1;
@@ -46,7 +47,11 @@ export const createNote = async (req, res) => {
   try {
     const note = await Note.create({
       ...req.body,
-      slug: req.body.title.substr(0, 50),
+      slug: req.body.title
+        .toLowerCase()
+        .trim()
+        .replace(/[^A-Z0-9]/gi, "_")
+        .substr(0, 50),
     });
     return res
       .status(StatusCodes.CREATED)
@@ -63,10 +68,11 @@ export const createNote = async (req, res) => {
   }
 };
 
-export const showNoteById = async (req, res) => {
-  const noteID = req.params.id;
-  const note = await Note.findOne({ _id: noteID }).populate("user", [
+export const getNoteBySlug = async (req, res) => {
+  const slug = req.params.slug;
+  const note = await Note.findOne({ slug }).populate("user", [
     "name",
+    "slug",
     "email",
     "avatar",
   ]);
@@ -75,9 +81,15 @@ export const showNoteById = async (req, res) => {
       .status(StatusCodes.NOT_FOUND)
       .json(errorResponse(StatusCodes.NOT_FOUND, "Note not found"));
   }
-  return res
-    .status(StatusCodes.OK)
-    .json(successResponse(StatusCodes.OK, "Fetch Message Success", note));
+  const userId = req.get("userId");
+  const isFollowing = await isFollow(userId, note.user.slug);
+  console.log(isFollowing);
+  return res.status(StatusCodes.OK).json(
+    successResponse(StatusCodes.OK, "Fetch Message Success", {
+      ...note._doc,
+      isFollowing,
+    })
+  );
 };
 
 export const updateNote = async (req, res) => {
