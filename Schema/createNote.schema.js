@@ -11,7 +11,8 @@ const createNoteSchema = z.object({
     .refine(
       (val) => mongoose.Types.ObjectId.isValid(val),
       "Provide a valid user id"
-    ),
+    )
+    .optional(),
 });
 // .refine(
 //   (schema) => (schema.visibility === "private" ? !!schema.receiver : true),

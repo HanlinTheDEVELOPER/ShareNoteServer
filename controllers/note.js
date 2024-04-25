@@ -92,16 +92,47 @@ export const getNoteBySlug = async (req, res) => {
   );
 };
 
-export const updateNote = async (req, res) => {
-  const { id } = req.params;
+export const getNoteForUpdate = async (req, res) => {
   try {
-    const updateNote = await Note.findByIdAndUpdate(
-      id,
-      { ...req.body, slug: req.body.content.substr(0, 50) },
+    const { slug } = req.params;
+
+    const note = await Note.findOne({ slug }).select("title content tags");
+    return res
+      .status(StatusCodes.ACCEPTED)
+      .json(successResponse(StatusCodes.ACCEPTED, " Fetched Success", note));
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        errorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Fetched Failed",
+          error
+        )
+      );
+  }
+};
+
+export const updateNote = async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const updateNote = await Note.findOneAndUpdate(
+      { slug },
+      {
+        ...req.body,
+        slug: req.body.title
+          .toLowerCase()
+          .trim()
+          .replace(/[^A-Z0-9]/gi, "_")
+          .substr(0, 50),
+      },
       {
         new: true,
+        fields: { slug: 1 },
       }
     );
+    console.log(updateNote);
     if (!updateNote) {
       return res
         .status(StatusCodes.NOT_FOUND)
