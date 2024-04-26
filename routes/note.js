@@ -22,7 +22,7 @@ NoteRouter.post(
   validate(createNoteSchema),
   updateNote
 );
-NoteRouter.delete("/:id", isAuthenticate, deleteNote);
+NoteRouter.post("/delete/:slug", isAuthenticate, deleteNote);
 
 NoteRouter.post("/:slug", isAuthenticate, addSupports);
 

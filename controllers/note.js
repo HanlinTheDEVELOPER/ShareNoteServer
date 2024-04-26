@@ -155,9 +155,9 @@ export const updateNote = async (req, res) => {
 };
 
 export const deleteNote = async (req, res) => {
-  const { id } = req.params;
+  const { slug } = req.params;
   try {
-    await Note.findByIdAndDelete(id);
+    await Note.findOneAndDelete({ slug });
 
     return res
       .status(StatusCodes.NO_CONTENT)
