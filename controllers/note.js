@@ -160,8 +160,8 @@ export const deleteNote = async (req, res) => {
     await Note.findOneAndDelete({ slug });
 
     return res
-      .status(StatusCodes.NO_CONTENT)
-      .json(StatusCodes.NO_CONTENT, "Note Deleted", []);
+      .status(StatusCodes.OK)
+      .json(StatusCodes.OK, "Note Deleted", { msg: "ok" });
   } catch (error) {
     console.log(error);
     return res
