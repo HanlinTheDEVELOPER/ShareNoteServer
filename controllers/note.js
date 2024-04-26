@@ -30,7 +30,7 @@ export const getAllNotes = async (req, res) => {
     .sort({ createdAt: -1 })
     .skip((currentPage - 1) * limit)
     .limit(limit)
-    .populate("user", ["name", "email", "avatar"]);
+    .populate("user", ["name", "email", "avatar", "slug"]);
   if (!notes) {
     return res.status(500).json({ message: "internal server error" });
   }
