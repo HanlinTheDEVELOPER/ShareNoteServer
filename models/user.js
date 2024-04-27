@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    followers: {
+      type: Number,
+      default: 0,
+    },
     tags: {
       type: [String] || null,
       default: null,

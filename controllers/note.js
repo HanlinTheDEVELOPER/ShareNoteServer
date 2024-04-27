@@ -2,6 +2,7 @@ import Note from "../models/note.js";
 import { StatusCodes } from "http-status-codes";
 import { errorResponse, successResponse } from "../lib/response.js";
 import isFollow from "../lib/isFollow.js";
+import UserFollow from "../models/userFollow.js";
 
 export const getAllNotes = async (req, res) => {
   const currentPage = req.query.page || 1;
@@ -22,8 +23,16 @@ export const getAllNotes = async (req, res) => {
           )
         );
     });
+  let filter;
+  if (tag === "Following") {
+    const userId = req.get("userId");
+    const followingList = await UserFollow.findOne({ userId });
+    const following = followingList?.following ?? [];
 
-  const filter = tag === "Recommends" ? {} : { tags: tag };
+    filter = { user: { $in: following } };
+  } else {
+    filter = tag === "Recommends" ? {} : { tags: tag };
+  }
 
   const notes = await Note.find(filter)
     .select("title slug createdAt supports")

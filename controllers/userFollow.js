@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import isFollow from "../lib/isFollow.js";
 import UserFollow from "../models/userFollow.js";
 import { successResponse } from "../lib/response.js";
+import User from "../models/user.js";
 
 export const follow = async (req, res) => {
   try {
@@ -30,6 +31,11 @@ export const follow = async (req, res) => {
       },
       { new: true }
     );
+
+    const profile = await User.findByIdAndUpdate(profileId, {
+      $inc: { supports: 1 },
+    });
+
     return res
       .status(StatusCodes.ACCEPTED)
       .json(
@@ -66,6 +72,12 @@ export const unfollow = async (req, res) => {
         following: newFollowingList,
       },
       { new: true }
+    );
+    const profile = await User.findOneAndUpdate(
+      { slug: profileSlug },
+      {
+        $inc: { supports: -1 },
+      }
     );
     return res
       .status(StatusCodes.OK)
