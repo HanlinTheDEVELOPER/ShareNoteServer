@@ -10,7 +10,7 @@ export const follow = async (req, res) => {
     const userId = req.user;
     let followList = await UserFollow.findOne({
       userId,
-      following: { $ne: profileId }, //fetch item not including profile id in following field arr
+      // following: { $ne: profileId }, //fetch item not including profile id in following field arr
     }).select("following");
 
     if (!followList) {
@@ -32,9 +32,34 @@ export const follow = async (req, res) => {
       { new: true }
     );
 
-    const profile = await User.findByIdAndUpdate(profileId, {
+    await User.findByIdAndUpdate(profileId, {
       $inc: { supports: 1 },
     });
+
+    let profileFollowerList = await UserFollow.findOne({
+      userId: profileId,
+    }).select("follower");
+
+    if (!profileFollowerList) {
+      profileFollowerList = await UserFollow.create({
+        userId: profileId,
+        following: [],
+        follower: [],
+      });
+    }
+
+    const followerSet = new Set(profileFollowerList.follower);
+    const oldLength = followerSet.size;
+    followerSet.add(userId);
+    const newLength = followerSet.size;
+    if (oldLength + 1 === newLength) {
+      await UserFollow.findOneAndUpdate(
+        { userId: profileId },
+        {
+          follower: Array.from(followerSet),
+        }
+      );
+    }
 
     return res
       .status(StatusCodes.ACCEPTED)
@@ -58,6 +83,7 @@ export const follow = async (req, res) => {
 export const unfollow = async (req, res) => {
   try {
     const profileSlug = req.body.profileSlug;
+    const profile = await User.findOne({ slug: profileSlug }).select("_id");
     const userId = req.user;
     const followList = await UserFollow.findOne({ userId }).populate({
       path: "following",
@@ -73,12 +99,31 @@ export const unfollow = async (req, res) => {
       },
       { new: true }
     );
-    const profile = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { slug: profileSlug },
       {
         $inc: { supports: -1 },
       }
     );
+
+    let profileFollowerList = await UserFollow.findOne({
+      userId: profile._id,
+    })
+      .select("follower")
+      .populate({ path: "follower", select: "slug" });
+
+    if (profileFollowerList) {
+      const newProfileFollowerList = profileFollowerList?.follower?.filter(
+        (user) => user._id !== userId
+      );
+      await UserFollow.findOneAndUpdate(
+        { userId: profile._id },
+        {
+          follower: newProfileFollowerList,
+        }
+      );
+    }
+
     return res
       .status(StatusCodes.OK)
       .json(
@@ -87,6 +132,7 @@ export const unfollow = async (req, res) => {
         newFollowList
       );
   } catch (error) {
+    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(

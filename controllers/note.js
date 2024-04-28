@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { errorResponse, successResponse } from "../lib/response.js";
 import isFollow from "../lib/isFollow.js";
 import UserFollow from "../models/userFollow.js";
+import { SavedNotes } from "../models/savedNotes.js";
 
 export const getAllNotes = async (req, res) => {
   const currentPage = req.query.page || 1;
@@ -185,10 +186,10 @@ export const deleteNote = async (req, res) => {
 };
 
 export const addSupports = async (req, res) => {
-  const { slug } = req.params;
   try {
+    const { slug } = req.params;
     const note = await Note.findOne({ slug }).select("supports");
-    await Note.findOneAndUpdate({ slug }, { supports: note.supports + 1 });
+    await Note.findOneAndUpdate({ slug }, { $inc: { supports: 1 } });
     return res
       .status(StatusCodes.OK)
       .json(successResponse(StatusCodes.OK, "Added Supports", {}));
@@ -197,5 +198,25 @@ export const addSupports = async (req, res) => {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed", {}));
+  }
+};
+
+export const saveNote = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const userId = req.user;
+    const { _id: noteId } = await Note.findOne({ slug }).select("_id");
+    const saved = await SavedNotes.findOneAndUpdate(
+      { userId },
+      { $push: { savedNotes: noteId } }
+    );
+    return res
+      .status(StatusCodes.OK)
+      .json(successResponse(StatusCodes.OK, "Saved", {}));
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed"));
   }
 };

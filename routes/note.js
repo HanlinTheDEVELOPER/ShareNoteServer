@@ -9,7 +9,11 @@ import {
 import validate from "../middlewares/validateRequest.js";
 import createNoteSchema from "../Schema/createNote.schema.js";
 import isAuthenticate from "../middlewares/isAuthenticate.js";
-import { addSupports, getNoteForUpdate } from "../controllers/note.js";
+import {
+  addSupports,
+  getNoteForUpdate,
+  saveNote,
+} from "../controllers/note.js";
 const NoteRouter = express.Router();
 
 NoteRouter.get("/", getAllNotes);
@@ -25,5 +29,6 @@ NoteRouter.post(
 NoteRouter.post("/delete/:slug", isAuthenticate, deleteNote);
 
 NoteRouter.post("/:slug", isAuthenticate, addSupports);
+NoteRouter.post("/save/:slug", isAuthenticate, saveNote);
 
 export default NoteRouter;

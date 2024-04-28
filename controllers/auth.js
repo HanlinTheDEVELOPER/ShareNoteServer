@@ -187,14 +187,11 @@ export const logout = async (req, res) => {
     const refreshToken = req.cookies?.jwt;
 
     if (user && refreshToken) {
-      await User.findOneAndUpdate(
-        { refresh_tokens: refreshToken },
-        {
-          refresh_tokens: user.refresh_tokens.filter(
-            (token) => token !== refreshToken
-          ),
-        }
-      );
+      await User.findByIdAndUpdate(id, {
+        refresh_tokens: user.refresh_tokens.filter(
+          (token) => token !== refreshToken
+        ),
+      });
     }
     res.clearCookie("jwt", {
       httpOnly: true,

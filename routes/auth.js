@@ -33,7 +33,7 @@ authRouter.get(
 
 authRouter.get("/login", AuthController.login);
 authRouter.get("/status", isAuthenticate, AuthController.checkIsLogin);
-authRouter.get("/logout", AuthController.logout);
+authRouter.get("/logout", isAuthenticate, AuthController.logout);
 authRouter.get("/logoutall", isAuthenticate, AuthController.logoutOfAllDevices);
 
 export default authRouter;
