@@ -13,6 +13,7 @@ import {
   addSupports,
   getNoteForUpdate,
   saveNote,
+  unsaveNote,
 } from "../controllers/note.js";
 const NoteRouter = express.Router();
 
@@ -30,5 +31,5 @@ NoteRouter.post("/delete/:slug", isAuthenticate, deleteNote);
 
 NoteRouter.post("/:slug", isAuthenticate, addSupports);
 NoteRouter.post("/save/:slug", isAuthenticate, saveNote);
-
+NoteRouter.post("/unsave/:slug", isAuthenticate, unsaveNote);
 export default NoteRouter;

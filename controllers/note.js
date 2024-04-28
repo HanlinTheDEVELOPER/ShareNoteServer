@@ -220,3 +220,28 @@ export const saveNote = async (req, res) => {
       .json(errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed"));
   }
 };
+
+export const unsaveNote = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const userId = req.user;
+    const notes = await SavedNotes.findOne({ userId }).populate({
+      path: "savedNotes",
+      select: "slug",
+    });
+    await SavedNotes.findOneAndUpdate(
+      { userId },
+      {
+        savedNotes: notes?.savedNotes.filter((note) => note.slug !== slug),
+      }
+    );
+    return res
+      .status(StatusCodes.OK)
+      .json(successResponse(StatusCodes.OK, "Saved", {}));
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed"));
+  }
+};
