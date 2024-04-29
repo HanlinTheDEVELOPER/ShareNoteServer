@@ -4,6 +4,9 @@ import { errorResponse, successResponse } from "../lib/response.js";
 import isFollow from "../lib/isFollow.js";
 import UserFollow from "../models/userFollow.js";
 import { SavedNotes } from "../models/savedNotes.js";
+import isNoteSaved from "../lib/isNoteSaved.js";
+import Support from "../models/support.js";
+import { ObjectId } from "mongodb";
 
 export const getAllNotes = async (req, res) => {
   const currentPage = req.query.page || 1;
@@ -93,11 +96,13 @@ export const getNoteBySlug = async (req, res) => {
   }
   const userId = req.get("userId");
   const isFollowing = await isFollow(userId, note.user.slug);
+  const isSaved = await isNoteSaved(userId, note?.slug);
 
   return res.status(StatusCodes.OK).json(
     successResponse(StatusCodes.OK, "Fetch Message Success", {
       ...note._doc,
       isFollowing,
+      isSaved,
     })
   );
 };
@@ -188,7 +193,33 @@ export const deleteNote = async (req, res) => {
 export const addSupports = async (req, res) => {
   try {
     const { slug } = req.params;
-    const note = await Note.findOne({ slug }).select("supports");
+    const userId = req.user;
+    const note = await Note.findOne({ slug }).select("_id");
+    let noteSupporters = await Support.findOne({ noteId: note._id });
+
+    if (!noteSupporters) {
+      noteSupporters = await Support.create({
+        noteId: note._id,
+        supporters: [],
+      });
+    }
+
+    const supporterSet = new Set(noteSupporters.supporters ?? []);
+    const oldSupporterCount = supporterSet.size;
+    console.log(supporterSet);
+    supporterSet.add(userId);
+
+    const newSupporterCount = supporterSet.size;
+    console.log(oldSupporterCount, newSupporterCount, userId);
+    console.log(supporterSet);
+
+    if (oldSupporterCount !== newSupporterCount) {
+      await Support.findOneAndUpdate(
+        { noteId: note._id },
+        { $push: { supporters: userId } }
+      );
+    }
+
     await Note.findOneAndUpdate({ slug }, { $inc: { supports: 1 } });
     return res
       .status(StatusCodes.OK)
@@ -205,10 +236,16 @@ export const saveNote = async (req, res) => {
   try {
     const { slug } = req.params;
     const userId = req.user;
-    const { _id: noteId } = await Note.findOne({ slug }).select("_id");
-    const saved = await SavedNotes.findOneAndUpdate(
+    const note = await Note.findOne({ slug }).select("_id");
+    let saved = await SavedNotes.findOne({ userId });
+
+    if (!saved) {
+      saved = await SavedNotes.create({ userId, savedNotes: [] });
+    }
+
+    await SavedNotes.findOneAndUpdate(
       { userId },
-      { $push: { savedNotes: noteId } }
+      { $push: { savedNotes: note._id } }
     );
     return res
       .status(StatusCodes.OK)
