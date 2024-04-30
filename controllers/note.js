@@ -232,6 +232,34 @@ export const addSupports = async (req, res) => {
   }
 };
 
+export const getSupporter = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const note = await Note.findOne({ slug }).select("_id supports");
+    const supporters = await Support.findOne({ noteId: note._id }).populate({
+      path: "supporters",
+      select: "name avatar",
+    });
+    return res.status(StatusCodes.OK).json(
+      successResponse(StatusCodes.OK, "Success", {
+        supporters: supporters?._doc.supporters,
+        supports: note.supports,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        errorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          "Get Supporter Failed",
+          {}
+        )
+      );
+  }
+};
+
 export const saveNote = async (req, res) => {
   try {
     const { slug } = req.params;

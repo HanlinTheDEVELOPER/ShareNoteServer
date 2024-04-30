@@ -12,6 +12,7 @@ import isAuthenticate from "../middlewares/isAuthenticate.js";
 import {
   addSupports,
   getNoteForUpdate,
+  getSupporter,
   saveNote,
   unsaveNote,
 } from "../controllers/note.js";
@@ -29,7 +30,9 @@ NoteRouter.post(
 );
 NoteRouter.post("/delete/:slug", isAuthenticate, deleteNote);
 
-NoteRouter.post("/:slug", isAuthenticate, addSupports);
+NoteRouter.post("/support/:slug", isAuthenticate, addSupports);
+NoteRouter.get("/support/:slug", getSupporter);
 NoteRouter.post("/save/:slug", isAuthenticate, saveNote);
 NoteRouter.post("/unsave/:slug", isAuthenticate, unsaveNote);
+
 export default NoteRouter;
