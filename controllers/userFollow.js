@@ -33,7 +33,7 @@ export const follow = async (req, res) => {
     );
 
     await User.findByIdAndUpdate(profileId, {
-      $inc: { supports: 1 },
+      $inc: { followers: 1 },
     });
 
     let profileFollowerList = await UserFollow.findOne({
@@ -85,6 +85,7 @@ export const unfollow = async (req, res) => {
     const profileSlug = req.body.profileSlug;
     const profile = await User.findOne({ slug: profileSlug }).select("_id");
     const userId = req.user;
+    const userSlug = await User.findById(userId).select("slug");
     const followList = await UserFollow.findOne({ userId }).populate({
       path: "following",
       select: "slug",
@@ -102,20 +103,22 @@ export const unfollow = async (req, res) => {
     await User.findOneAndUpdate(
       { slug: profileSlug },
       {
-        $inc: { supports: -1 },
+        $inc: { followers: -1 },
       }
     );
+    console.log("profile -", profile);
 
     let profileFollowerList = await UserFollow.findOne({
       userId: profile._id,
     })
       .select("follower")
       .populate({ path: "follower", select: "slug" });
-
+    console.log(profileFollowerList);
     if (profileFollowerList) {
       const newProfileFollowerList = profileFollowerList?.follower?.filter(
-        (user) => user._id !== userId
+        (user) => user.slug !== userSlug.slug
       );
+      console.log(newProfileFollowerList);
       await UserFollow.findOneAndUpdate(
         { userId: profile._id },
         {
