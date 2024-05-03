@@ -147,7 +147,7 @@ export const updateNote = async (req, res) => {
         fields: { slug: 1 },
       }
     );
-    console.log(updateNote);
+
     if (!updateNote) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -206,12 +206,10 @@ export const addSupports = async (req, res) => {
 
     const supporterSet = new Set(noteSupporters.supporters ?? []);
     const oldSupporterCount = supporterSet.size;
-    console.log(supporterSet);
+
     supporterSet.add(userId);
 
     const newSupporterCount = supporterSet.size;
-    console.log(oldSupporterCount, newSupporterCount, userId);
-    console.log(supporterSet);
 
     if (oldSupporterCount !== newSupporterCount) {
       await Support.findOneAndUpdate(
