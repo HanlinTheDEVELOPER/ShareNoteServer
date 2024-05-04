@@ -236,7 +236,7 @@ export const getSupporter = async (req, res) => {
     const note = await Note.findOne({ slug }).select("_id supports");
     const supporters = await Support.findOne({ noteId: note._id }).populate({
       path: "supporters",
-      select: "name avatar",
+      select: "name avatar slug",
     });
     return res.status(StatusCodes.OK).json(
       successResponse(StatusCodes.OK, "Success", {
