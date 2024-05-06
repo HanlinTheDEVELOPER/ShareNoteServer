@@ -56,6 +56,45 @@ export const getAllNotes = async (req, res) => {
   );
 };
 
+export const searchNotes = async (req, res) => {
+  const currentPage = req.query.page || 1;
+  const limit = req.query.limit || 24;
+  const key = req.query.key;
+  console.log(key);
+  let totalNotes;
+  Note.find({ slug: { $regex: ".*" + key + ".*" } })
+    .countDocuments()
+    .then((count) => (totalNotes = count))
+    .catch((err) => {
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json(
+          errorResponse(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            "Internal Server Error",
+            err
+          )
+        );
+    });
+
+  const notes = await Note.find({ slug: { $regex: ".*" + key + ".*" } })
+    .select("title slug createdAt supports")
+    .sort({ createdAt: -1 })
+    .skip((currentPage - 1) * limit)
+    .limit(limit)
+    .populate("user", ["name", "email", "avatar", "slug"]);
+  if (!notes) {
+    return res.status(500).json({ message: "internal server error" });
+  }
+  res.status(StatusCodes.OK).json(
+    successResponse(StatusCodes.OK, "Fetch Message Success", {
+      notes,
+      totalPages: Math.ceil(totalNotes / limit),
+      currentPage,
+    })
+  );
+};
+
 export const createNote = async (req, res) => {
   try {
     const note = await Note.create({
