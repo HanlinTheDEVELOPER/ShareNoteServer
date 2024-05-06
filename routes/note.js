@@ -21,7 +21,6 @@ const NoteRouter = express.Router();
 
 NoteRouter.get("/", getAllNotes);
 NoteRouter.post("/", isAuthenticate, validate(createNoteSchema), createNote);
-NoteRouter.get("/search", searchNotes);
 NoteRouter.get("/:slug", getNoteBySlug);
 NoteRouter.get("/update/:slug", isAuthenticate, getNoteForUpdate);
 NoteRouter.post(
@@ -31,6 +30,7 @@ NoteRouter.post(
   updateNote
 );
 
+NoteRouter.get("/search/:key", searchNotes);
 NoteRouter.post("/delete/:slug", isAuthenticate, deleteNote);
 
 NoteRouter.post("/support/:slug", isAuthenticate, addSupports);

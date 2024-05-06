@@ -59,8 +59,8 @@ export const getAllNotes = async (req, res) => {
 export const searchNotes = async (req, res) => {
   const currentPage = req.query.page || 1;
   const limit = req.query.limit || 24;
-  const key = req.query.key;
-  console.log(key);
+  const key = req.params.key;
+
   let totalNotes;
   Note.find({ slug: { $regex: ".*" + key + ".*" } })
     .countDocuments()

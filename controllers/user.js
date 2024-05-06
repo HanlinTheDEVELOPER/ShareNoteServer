@@ -11,7 +11,7 @@ export const getProfile = async (req, res) => {
   const userId = req.get("userId");
   const isFollowing = await isFollow(userId, slug);
   const profile = await User.findOne({ slug }).select(
-    "name slug email avatar tags"
+    "name slug email avatar tags followers"
   );
 
   if (!profile) {
