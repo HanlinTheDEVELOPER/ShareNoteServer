@@ -7,6 +7,7 @@ import { SavedNotes } from "../models/savedNotes.js";
 import isNoteSaved from "../lib/isNoteSaved.js";
 import Support from "../models/support.js";
 import { ObjectId } from "mongodb";
+import User from "../models/user.js";
 
 export const getAllNotes = async (req, res) => {
   const currentPage = req.query.page || 1;
@@ -346,4 +347,76 @@ export const unsaveNote = async (req, res) => {
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed"));
   }
+};
+
+export const getNoteByUserId = async (req, res) => {
+  const userSlug = req.params.userSlug;
+  const currentPage = req.query.page || 1;
+  const limit = req.query.limit || 24;
+
+  const { _id: userId } = await User.findOne({ slug: userSlug }).select("_id");
+  let totalNotes;
+  Note.find({ user: userId })
+    .countDocuments()
+    .then((count) => (totalNotes = count))
+    .catch((err) => {
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json(
+          errorResponse(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            "Internal Server Error",
+            err
+          )
+        );
+    });
+
+  const notes = await Note.find({ user: userId })
+    .select("title slug createdAt supports")
+    .sort({ createdAt: -1 })
+    .skip((currentPage - 1) * limit)
+    .limit(limit)
+    .populate("user", ["name", "email", "avatar", "slug"]);
+  if (!notes) {
+    return res.status(500).json({ message: "internal server error" });
+  }
+  res.status(StatusCodes.OK).json(
+    successResponse(StatusCodes.OK, "Fetch Message Success", {
+      notes,
+      totalPages: Math.ceil(totalNotes / limit),
+      currentPage,
+    })
+  );
+};
+
+export const getSavedNodeByUser = async (req, res) => {
+  const currentPage = req.query.page || 1;
+  const limit = req.query.limit || 24;
+  const userId = req.user;
+
+  const notes = await SavedNotes.findOne({ userId })
+    .select("savedNotes")
+    .sort({ createdAt: -1 })
+    .skip((currentPage - 1) * limit)
+    .limit(limit)
+    .populate({
+      path: "savedNotes",
+      select: "title slug createdAt supports",
+      populate: {
+        path: "user",
+        select: "name email avatar slug",
+      },
+    });
+
+  if (!notes) {
+    return res.status(500).json({ message: "internal server error" });
+  }
+  const length = notes.savedNotes.length;
+  res.status(StatusCodes.OK).json(
+    successResponse(StatusCodes.OK, "Fetch Message Success", {
+      notes: notes?.savedNotes,
+      totalPages: Math.ceil(length / limit),
+      currentPage,
+    })
+  );
 };

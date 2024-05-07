@@ -11,13 +11,16 @@ import {
   saveNote,
   unsaveNote,
   searchNotes,
+  getNoteByUserId,
+  getSavedNodeByUser,
 } from "../controllers/note.js ";
 import validate from "../middlewares/validateRequest.js";
 import createNoteSchema from "../Schema/createNote.schema.js";
 import isAuthenticate from "../middlewares/isAuthenticate.js";
-import {} from "../controllers/note.js";
 
 const NoteRouter = express.Router();
+
+NoteRouter.get("/saved", isAuthenticate, getSavedNodeByUser);
 
 NoteRouter.get("/", getAllNotes);
 NoteRouter.post("/", isAuthenticate, validate(createNoteSchema), createNote);
@@ -32,6 +35,7 @@ NoteRouter.post(
 
 NoteRouter.get("/search/:key", searchNotes);
 NoteRouter.post("/delete/:slug", isAuthenticate, deleteNote);
+NoteRouter.get("/uploaded/:userSlug", getNoteByUserId);
 
 NoteRouter.post("/support/:slug", isAuthenticate, addSupports);
 NoteRouter.get("/support/:slug", getSupporter);
